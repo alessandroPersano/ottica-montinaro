@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-label="Lente torica, illustrazione">
+  <rect width="640" height="480" fill="#FBF8F3"/>
+  <ellipse cx="320" cy="240" rx="150" ry="90" fill="none" stroke="#0E4D5C" stroke-width="18"/>
+  <path d="M250 240h140" stroke="#8C6A32" stroke-width="8"/>
+</svg>

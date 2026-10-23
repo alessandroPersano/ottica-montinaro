@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-label="Lente giornaliera, illustrazione">
+  <rect width="640" height="480" fill="#FBF8F3"/>
+  <circle cx="320" cy="240" r="120" fill="none" stroke="#0E4D5C" stroke-width="18"/>
+  <circle cx="320" cy="240" r="46" fill="#1F7A8C" opacity="0.35"/>
+</svg>

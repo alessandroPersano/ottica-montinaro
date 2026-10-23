@@ -1,36 +1,101 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ottica Montinaro — gestionale lenti a contatto
 
-## Getting Started
+Applicazione Next.js per catalogo, ordini, abbonamenti, ritiro in negozio e scadenziario. L'interfaccia è in italiano. I testi legali e i dati di contatto non verificati dal titolare sono bozze.
 
-First, run the development server:
+## Requisiti
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Node.js 22 o superiore (in questo ambiente è stato usato Node 24 portabile)
+- npm 11
+- Per lo sviluppo locale non serve Neon: il database predefinito può essere PGlite
+
+## Avvio locale
+
+```powershell
+copy .env.example .env
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+In `.env` per il solo sviluppo:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+DATABASE_URL=pglite:./.data/pglite
+BETTER_AUTH_SECRET=dev-only-secret-change-before-any-deploy-32
+BETTER_AUTH_URL=http://localhost:3000
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+CRON_SECRET=dev-cron-secret-not-for-production
+EMAIL_OUTBOX=true
+AUTO_MIGRATE=true
+SEED_ON_BOOT=true
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Poi:
 
-## Learn More
+```powershell
+npm install
+npm run db:migrate
+npm run db:seed
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+`AUTO_MIGRATE` e `SEED_ON_BOOT` valgono solo per un URL `pglite:` e non vanno attivati in produzione.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Account demo
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Password di tutti gli account demo: `Demo-Password-1`. Non usarla in produzione.
 
-## Deploy on Vercel
+- `demo.admin@example.com` — amministratore
+- `demo.operatore@example.com` — operatore
+- `demo.cliente@example.com` — cliente
+- `demo.cliente2@example.com` — cliente
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Il seed rifiuta l'ambiente di produzione se `ALLOW_DEMO_SEED` non è `true`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Primo amministratore reale
+
+Non inserire la password nel repository. Da una shell, con le variabili solo per quel processo:
+
+```powershell
+$env:ADMIN_EMAIL = "admin@example.com"
+$env:ADMIN_PASSWORD = "una-password-di-almeno-12-caratteri"
+$env:ADMIN_NAME = "Nome Cognome"
+npm run admin:create
+```
+
+## Comandi
+
+- `npm run lint`
+- `npm run typecheck`
+- `npm run test`
+- `npm run test:e2e`
+- `npm run build`
+- `npm run db:generate`
+- `npm run db:migrate`
+- `npm run db:seed`
+
+## Stripe in test mode
+
+Lascia `STRIPE_SECRET_KEY` e `STRIPE_WEBHOOK_SECRET` vuoti per provare il pagamento al ritiro senza Stripe. Per il checkout online:
+
+1. Installa Stripe CLI.
+2. `stripe login`
+3. `stripe listen --forward-to localhost:3000/api/stripe/webhook`
+4. Copia il `whsec_` mostrato in `STRIPE_WEBHOOK_SECRET`.
+5. Usa chiavi `sk_test_` e `pk_test_`.
+6. Carta di prova `4242 4242 4242 4242`, data futura, CVC qualsiasi.
+
+Il redirect del browser non aggiorna lo stock. Lo fa solo il webhook firmato.
+
+## Email
+
+Con `EMAIL_OUTBOX=true` i messaggi restano nella tabella `email_outbox` e non partono da Resend. In produzione servono `RESEND_API_KEY` e un mittente verificato.
+
+## Documentazione
+
+- `IMPLEMENTATION_PLAN.md`
+- `BRAND_ASSETS_NEEDED.md`
+- `DEPLOYMENT_CHECKLIST.md`
+- `docs/architecture.md`
+- `docs/database.md`
+- `docs/stripe.md`
+- `docs/in-store-payments.md`
+- `docs/privacy-and-retention.md`
+- `docs/operations.md`
